@@ -101,8 +101,25 @@ def train(mnist):
 
 
 def main(argv=None):
-	mnist = input_data.read_data_sets("/Users/guoqiangzhang/work1/tensorflow/tensorflow-tutorial/Deep_Learning_with_TensorFlow/datasets/MNIST_data", one_hot=True)
+	mnist = input_data.read_data_sets("/Users/xxx/work5/tensorflow/mnist", one_hot=True)
 	train(mnist)
 
 if __name__ == '__main__':
 	main()
+
+"""
+Extracting /Users/xxx/work5/tensorflow/mnist/train-images-idx3-ubyte.gz
+Extracting /Users/xxx/work5/tensorflow/mnist/train-labels-idx1-ubyte.gz
+Extracting /Users/xxx/work5/tensorflow/mnist/t10k-images-idx3-ubyte.gz
+Extracting /Users/xxx/work5/tensorflow/mnist/t10k-labels-idx1-ubyte.gz
+After 1 training step(s), loss on training batch is: 6.79178.
+After 1001 training step(s), loss on training batch is: 0.733534.
+After 2001 training step(s), loss on training batch is: 0.681419.
+After 3001 training step(s), loss on training batch is: 0.659512.
+After 4001 training step(s), loss on training batch is: 0.681954.
+After 5001 training step(s), loss on training batch is: 0.673535.
+
+real	48m12.839s
+user	95m13.749s
+sys	12m33.206s
+"""
