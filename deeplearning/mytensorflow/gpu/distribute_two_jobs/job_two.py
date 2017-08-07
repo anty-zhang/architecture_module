@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+
+import tensorflow as tf
+c = tf.constant("Hello from server2")
+
+# 生成有两个任务的集群
+# 一个任务跑在本地2222端口，另一个跑在本地2223端口
+cluster = tf.train.ClusterSpec({'local': ["localhost:2222", "localhost:2223"]})
+
+# 通过上面生成的集群配置生成server，并通过job_name和task_index指定当前所启动的任务
+server = tf.train.Server(cluster, job_name='local', task_index=1)
+
+# 通过server.target生成会话来使用TensorFlow集群中的资源
+with tf.Session(server.target, config=tf.ConfigProto(log_device_placement=True)) as sess:
+    print sess.run(c)
+    server.join()
