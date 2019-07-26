@@ -70,6 +70,36 @@ Explain dependency query
 
 ```
 
+# 常用函数
+
+```sql
+-- unix_timestamp() 当前系统时间
+-- to_date(string timestamp) 将时间戳转换成日期型字符串
+-- datediff(string enddate, string startdate) 返回int 的两个日期差
+-- date_add(string startdate, int days) 日期加减
+-- current_timestamp 返回当前时间戳
+-- current_date 返回当前日期
+-- date_format(date/timestamp/string ts, string fmt) 按照格式返回字符串
+-- last_day(string date) 返回 当前时间的月末日期
+
+-- trim(string A) 删除字符串两边的空格，中间的会保留
+-- if(boolean testCondition, T valueTrue, T valueFalseOrNull) ，根据条件返回不同的值
+-- nvl(T value, T default_value) 如果T is null ，返回默认值
+-- length(string A) 返回字符串A的长度
+-- greatest(T v1, T v2, ...) 返回最大值，会过滤null
+-- least(T v1, T v2, ...) 返回最小值，会过滤null
+-- rand(), 返回0-1的随机值。rand(INT seed) 返回固定的随机值
+-- split(str, regex) ,安装规则截取字符串,返回数组
+
+-- rpad(string str, int len, string pad) 将字符串str 用pad进行右补足 到len位(如果位数不足的话)
+-- lpad(string str, int len, string pad) 将字符串str 用pad进行左补足 到len位(如果位数不足的话)
+-- repeat(string str, int n) 重复N次字符串
+
+-- regexp_replace(string A, string B, string C) 字符串替换函数，将字符串A 中的B 用 C 替换
+
+
+```
+
 # 常用DDL
 
 ## 三种建表方法
