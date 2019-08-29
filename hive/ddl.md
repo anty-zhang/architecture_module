@@ -368,3 +368,14 @@ gf    3  99  293
 -- PERCENTILE_DISC  -- 返回一个与输入的分布百分比值相对应的数据值，分布百分比的计算方法见函数CUME_DIST，如果没有正好对应的数据值，就取大于该分布值的下一个值。
 -- NTILE
 ```
+
+# 优化
+
+## map和reduce个数优化
+```sql
+set mapred.max.split.size=100000000;
+set mapred.min.split.size.per.node=100000000;
+set mapred.min.split.size.per.rack=100000000;
+set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;
+
+```
