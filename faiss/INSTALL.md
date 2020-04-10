@@ -1,19 +1,38 @@
-
 [TOC]
 
 # 介绍
 
-FAISS 是 Facebook AI 研究团队开源的针对聚类和相似性搜索库，它包含一种在任意大小的向量集合中搜索直到可能不适合在 RAM 中的新算法。它还包含用于评估和参数调整的支持代码。由于公司服务器没有连接外网，无法使用conda安装，所以直接源码安装，githup网站下载地址：
+## 特点
 
-https://github.com/facebookresearch/faiss
+- Faiss 本质上是一个向量（矢量）数据库
 
-安装方法参考安装说明：
+FAISS 是 Facebook AI 研究团队开源的针对聚类和相似性搜索库。
 
-https://github.com/facebookresearch/faiss/blob/master/INSTALL.md
+- 支持10亿级别向量的搜索
+
+- Faiss用C++ 编写，提供python接口
+
+- 核心算法提供了GPU实现
+
+## 解决主要问题 -- 时空优化
+
+
+# 核心算法实现
+
+
+，它包含一种在任意大小的向量集合中搜索直到可能不适合在 RAM 中的新算法。它还包含用于评估和参数调整的支持代码。由于公司服务器没有连接外网，无法使用conda安装，所以直接源码安装，
+
+
 
 faiss安装可以使用make工具或者cmake工具。make可以生成c++接口和python接口， cmake编译只能生成c++接口
 
 # install
+
+[githup网站下载地址](https://github.com/facebookresearch/faiss)
+
+安装方法参考安装说明：
+
+https://github.com/facebookresearch/faiss/blob/master/INSTALL.md
 
 ## Aanconda install
 
@@ -30,6 +49,7 @@ pip install faiss-cpu==1.6.0
 ```
 
 ## CPU make install
+
 ```bash
 # env
 # lspci | grep VGA
@@ -69,20 +89,26 @@ PYTHONCFLAGS = -I/opt/.pyenv/versions/3.6.3/include/python3.6m -I/opt/.pyenv/ver
 PYTHONLIB    = -lpython
 PYTHON = /opt/.pyenv/versions/3.6.3/envs/faiss-env-3.6.3/bin/python
 
+
+./configure --prefix=/home/hotel-revenue-online/software/faiss/lib/faiss-cpu --without-cuda --with-python=/home/hotel-revenue-online/.pyenv/versions/3.6.3/envs/faiss-env-3.6.3/bin/python LDFLAGS=-L/home/hotel-revenue-online/.pyenv/versions/3.6.3/envs/faiss-env-3.6.3/lib --with-swig=/home/hotel-revenue-online/software/faiss/lib/swig/bin/swig
+
+PYTHONCFLAGS = -I/home/hotel-revenue-online/.pyenv/versions/3.6.3/include/python3.6m -I/home/hotel-revenue-online/.pyenv/versions/3.6.3/envs/faiss-env-3.6.3/lib/python3.6/site-packages/numpy/core/include/
+PYTHONLIB    = -lpython
+PYTHON = /home/hotel-revenue-online/.pyenv/versions/3.6.3/envs/faiss-env-3.6.3/bin/python
 ```
 
 ## GPU make install
+
 ```bash
 ./configure --prefix=/opt/software/faiss/lib/faiss-gpu-1 --with-python=/opt/.pyenv/versions/3.6.3/envs/faiss-gpu-3.6.3/bin/python LDFLAGS=-L/opt/share/lib64/mkl_linux/lib --with-swig=/opt/software/faiss/lib/swig/bin/swig --with-cuda=/usr/local/cuda-9.0
 
 PYTHONCFLAGS = -I/opt/.pyenv/versions/3.6.3/include/python3.6m -I/opt/.pyenv/versions/3.6.3/envs/faiss-gpu-3.6.3/lib/python3.6/site-packages/numpy/core/include/
 PYTHONLIB    = -lpython
 PYTHON = /opt/.pyenv/versions/3.6.3/envs/faiss-gpu-3.6.3/bin/python
-
 ```
 
-
 # 问题
+
 ## 问题1----需要配置LD_LIBRARY_PATH
 
 ```bash
@@ -151,7 +177,6 @@ demo_sift1M.cpp:205:38: warning: comparison of unsigned expression >= 0 is alway
          assert (selected_params.size() >= 0 ||
 ```
 
-
 ## 问题3 -- 编译GPU test
 
 ```bash
@@ -172,10 +197,8 @@ make: Leaving directory `/opt/software/faiss/faiss/gpu/test'
 ```
 
 ## 问题4 -- gpu/test/demo_ivfpq_indexing_gpu 执行异常
+
 ```bash
-
-
-
 (faiss-gpu-3.6.3) [hotel-revenue-online@xhy-30-111-42 faiss]$ ./gpu/test/demo_ivfpq_indexing_gpu
 [2.802 s] Generating 100000 vectors in 128D for training
 [2.912 s] Training the index
@@ -268,28 +291,108 @@ Missing separate debuginfos, use: debuginfo-install glibc-2.17-260.el7_6.3.x86_6
 
 
 [hotel-revenue-online@xhy-30-111-42 faiss]$ ldd gpu/test/demo_ivfpq_indexing_gpu
-	linux-vdso.so.1 =>  (0x00007ffdeffc1000)
-	/opt/share/lib64/mkl_linux/lib/libmkl_core.so (0x00007f9a3d977000)
-	/opt/share/lib64/mkl_linux/lib/libmkl_sequential.so (0x00007f9a3c3de000)
-	libmkl_intel_lp64.so => /opt/share/lib64/mkl_linux/lib/libmkl_intel_lp64.so (0x00007f9a3b8ad000)
-	libmkl_gnu_thread.so => /opt/share/lib64/mkl_linux/lib/libmkl_gnu_thread.so (0x00007f9a3a074000)
-	libgomp.so.1 => /lib64/libgomp.so.1 (0x00007f9a39e40000)
-	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f9a39c24000)
-	libdl.so.2 => /lib64/libdl.so.2 (0x00007f9a39a20000)
-	libcudart.so.9.0 => /usr/local/cuda-9.0/lib64/libcudart.so.9.0 (0x00007f9a397b2000)
-	libcublas.so.9.0 => /usr/local/cuda-9.0/lib64/libcublas.so.9.0 (0x00007f9a3637c000)
-	libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f9a36075000)
-	libm.so.6 => /lib64/libm.so.6 (0x00007f9a35d72000)
-	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f9a35b5c000)
-	libc.so.6 => /lib64/libc.so.6 (0x00007f9a3578f000)
-	/lib64/ld-linux-x86-64.so.2 (0x000056096363d000)
-	librt.so.1 => /lib64/librt.so.1 (0x00007f9a35586000)
-
+    linux-vdso.so.1 =>  (0x00007ffdeffc1000)
+    /opt/share/lib64/mkl_linux/lib/libmkl_core.so (0x00007f9a3d977000)
+    /opt/share/lib64/mkl_linux/lib/libmkl_sequential.so (0x00007f9a3c3de000)
+    libmkl_intel_lp64.so => /opt/share/lib64/mkl_linux/lib/libmkl_intel_lp64.so (0x00007f9a3b8ad000)
+    libmkl_gnu_thread.so => /opt/share/lib64/mkl_linux/lib/libmkl_gnu_thread.so (0x00007f9a3a074000)
+    libgomp.so.1 => /lib64/libgomp.so.1 (0x00007f9a39e40000)
+    libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f9a39c24000)
+    libdl.so.2 => /lib64/libdl.so.2 (0x00007f9a39a20000)
+    libcudart.so.9.0 => /usr/local/cuda-9.0/lib64/libcudart.so.9.0 (0x00007f9a397b2000)
+    libcublas.so.9.0 => /usr/local/cuda-9.0/lib64/libcublas.so.9.0 (0x00007f9a3637c000)
+    libstdc++.so.6 => /lib64/libstdc++.so.6 (0x00007f9a36075000)
+    libm.so.6 => /lib64/libm.so.6 (0x00007f9a35d72000)
+    libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007f9a35b5c000)
+    libc.so.6 => /lib64/libc.so.6 (0x00007f9a3578f000)
+    /lib64/ld-linux-x86-64.so.2 (0x000056096363d000)
+    librt.so.1 => /lib64/librt.so.1 (0x00007f9a35586000)
 ```
 
+# 索引使用
+
+## 索引介绍
+
+### IndexFlatL2
+
+- 欧式距离计算，暴力搜索
+
+- 通常用作其他索引搜索的对比基线
+
+### IndexFlatIP
+
+- 点积计算
+
+### IndexHNSWFlat
+
+- 分层，在小数据集上性能优秀
+
+### IndexIVFFlat
+
+- 聚类方式的索引
+
+- nlist为搜索空间的个数
+
+### IndexIVFPQ + IndexIVFPQR
+
+- 聚类 + 笛卡尔积量化器
+
+- 增加倒排索引
+
+- 有损压缩来压缩存储空间向量的变体
+
+- IndexIVFPQR 是IndexIVFPQ的优化版
+
+
+
+### IndexLSH
+
+- 局部敏感hash
+
+### IndexScalarQuantizer
+
+- 标准量化
+
+### IndexPQ
+
+- 量化器将全样本计算转化到子空间中心的距离
+
+- 特征编码，降低内存
+
+### IndexIVFScalaQuantizer
+
+- ScalarQuantizer + IVF
+
+
+
+
+
 # rerenece
+
 [Different CUDA versions shown by nvcc and NVIDIA-smi](https://stackoverflow.com/questions/53422407/different-cuda-versions-shown-by-nvcc-and-nvidia-smi)
 
 [faiss::gpu::runMatrixMult failure #34](https://github.com/facebookresearch/faiss/issues/34)
 
 [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive)
+
+[Faiss Indexs 的进一步了解](https://waltyou.github.io/Faiss-Indexs/#%E6%8C%91%E4%B8%80%E4%B8%AA%E5%90%88%E9%80%82%E7%9A%84-index)
+
+[Faiss indexes](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes)
+
+[理解 product quantization 算法](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2017/08/05/understanding-product-quantization)
+
+[实例理解product quantization算法 - 静夜录](http://www.fabwrite.com/productquantization)
+
+[Product quantization for nearest neighbor search](https://lear.inrialpes.fr/pubs/2011/JDS11/jegou_searching_with_quantization.pdf)
+
+[Faiss流程与原理分析 - yhzhou - 博客园](https://www.cnblogs.com/yhzhou/p/10568728.html)
+
+[配送交付时间轻量级预估实践](https://tech.meituan.com/2019/10/10/distribution-time-prediction-practice.html)
+
+[向量检索在闲鱼视频去重的实践](https://juejin.im/entry/5b91f8075188255c80664191)
+
+[AI在视频广告中的应用](https://www.cnblogs.com/Lee-yl/p/11333535.html)
+
+https://www.infoq.cn/article/2017/11/Faiss-Facebook
+
+https://www.cnblogs.com/yhzhou/p/10568728.html 
