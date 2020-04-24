@@ -4,7 +4,7 @@
 
 ## 特点
 
-- Faiss 本质上是一个向量（矢量）数据库
+- Faiss 本质上是一个向量（矢量）数据库，目的是为了解决KNN问题
 
 FAISS 是 Facebook AI 研究团队开源的针对聚类和相似性搜索库。
 
@@ -12,21 +12,38 @@ FAISS 是 Facebook AI 研究团队开源的针对聚类和相似性搜索库。
 
 - Faiss用C++ 编写，提供python接口
 
+- 优化了内存使用和速度
+
 - 核心算法提供了GPU实现
 
 ## 解决主要问题 -- 时空优化
 
+对于数据库来说，时空优化是两个永恒的主题，即在存储上如何以更少的空间来存储更多的信息，在搜索上如何以更快的速度来搜索出更准确的信息。faiss实际上借鉴了数据库中的索引功能。
 
 # 核心算法实现
 
-
-，它包含一种在任意大小的向量集合中搜索直到可能不适合在 RAM 中的新算法。它还包含用于评估和参数调整的支持代码。由于公司服务器没有连接外网，无法使用conda安装，所以直接源码安装，
-
+## 聚类Faiss提供了一个高效的k-means实现
 
 
-faiss安装可以使用make工具或者cmake工具。make可以生成c++接口和python接口， cmake编译只能生成c++接口
+## PCA降维算法
+
+
+## Product quantizer (乘积量化器)
+
+https://blog.csdn.net/Swartz2015/article/details/50859666
+
+https://blog.csdn.net/guanyonglai/article/details/78468673
+https://www.geek-share.com/detail/2661188974.html
+https://blog.csdn.net/CHIERYU/article/details/50321473
+https://www.cnblogs.com/mafuqiang/p/7161592.html
+https://blog.csdn.net/u010368556/article/details/80960661
+https://blog.csdn.net/langb2014/article/details/99675994
+
+http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2017/08/05/understanding-product-quantization
 
 # install
+
+faiss安装可以使用make工具或者cmake工具。make可以生成c++接口和python接口， cmake编译只能生成c++接口
 
 [githup网站下载地址](https://github.com/facebookresearch/faiss)
 
@@ -311,59 +328,64 @@ Missing separate debuginfos, use: debuginfo-install glibc-2.17-260.el7_6.3.x86_6
 
 # 索引使用
 
-## 索引介绍
+主要的索引类型有三类：索引Index，PCA降维、PQ乘积量化器
 
-### IndexFlatL2
+## Index索引
 
-- 欧式距离计算，暴力搜索
+Faiss中有两类基础索引类Index、IndexBinary
 
-- 通常用作其他索引搜索的对比基线
+- IndexFlatL2
 
-### IndexFlatIP
+ 欧式距离计算，暴力搜索
 
-- 点积计算
+ 通常用作其他索引搜索的对比基线
 
-### IndexHNSWFlat
+- IndexFlatIP
 
-- 分层，在小数据集上性能优秀
+ 点积计算
 
-### IndexIVFFlat
+- IndexHNSWFlat
 
-- 聚类方式的索引
+ 分层，在小数据集上性能优秀
 
-- nlist为搜索空间的个数
+- IndexIVFFlat
 
-### IndexIVFPQ + IndexIVFPQR
+ 聚类方式的索引
 
-- 聚类 + 笛卡尔积量化器
+ nlist为搜索空间的个数
 
-- 增加倒排索引
+- IndexIVFPQ + IndexIVFPQR
 
-- 有损压缩来压缩存储空间向量的变体
+ 聚类 + 笛卡尔积量化器
 
-- IndexIVFPQR 是IndexIVFPQ的优化版
+ 增加倒排索引
+
+ 有损压缩来压缩存储空间向量的变体
+
+ IndexIVFPQR 是IndexIVFPQ的优化版
+
+- IndexLSH
+
+ 局部敏感hash
+
+- IndexScalarQuantizer
+
+ 标准量化
+
+- IndexPQ
+
+ 量化器将全样本计算转化到子空间中心的距离
+
+ 特征编码，降低内存
+
+- IndexIVFScalaQuantizer
+
+ ScalarQuantizer + IVF
+
+## PCA降维
 
 
-
-### IndexLSH
-
-- 局部敏感hash
-
-### IndexScalarQuantizer
-
-- 标准量化
-
-### IndexPQ
-
-- 量化器将全样本计算转化到子空间中心的距离
-
-- 特征编码，降低内存
-
-### IndexIVFScalaQuantizer
-
-- ScalarQuantizer + IVF
-
-
+## Product Quantizer(乘积量化器)
 
 
 
@@ -377,22 +399,20 @@ Missing separate debuginfos, use: debuginfo-install glibc-2.17-260.el7_6.3.x86_6
 
 [Faiss Indexs 的进一步了解](https://waltyou.github.io/Faiss-Indexs/#%E6%8C%91%E4%B8%80%E4%B8%AA%E5%90%88%E9%80%82%E7%9A%84-index)
 
-[Faiss indexes](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes)
+[Faiss indexes 使用说明](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes)
 
 [理解 product quantization 算法](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2017/08/05/understanding-product-quantization)
-
-[实例理解product quantization算法 - 静夜录](http://www.fabwrite.com/productquantization)
 
 [Product quantization for nearest neighbor search](https://lear.inrialpes.fr/pubs/2011/JDS11/jegou_searching_with_quantization.pdf)
 
 [Faiss流程与原理分析 - yhzhou - 博客园](https://www.cnblogs.com/yhzhou/p/10568728.html)
 
-[配送交付时间轻量级预估实践](https://tech.meituan.com/2019/10/10/distribution-time-prediction-practice.html)
+[配送交付时间轻量级预估实践(索引性能对比)](https://tech.meituan.com/2019/10/10/distribution-time-prediction-practice.html)
 
-[向量检索在闲鱼视频去重的实践](https://juejin.im/entry/5b91f8075188255c80664191)
 
-[AI在视频广告中的应用](https://www.cnblogs.com/Lee-yl/p/11333535.html)
+[Faiss: A library for efficient similarity search](https://engineering.fb.com/ml-applications/faiss-a-library-for-efficient-similarity-search/)
 
-https://www.infoq.cn/article/2017/11/Faiss-Facebook
+[Faiss：Facebook 开源的相似性搜索类库](https://www.infoq.cn/article/2017/11/Faiss-Facebook)
 
-https://www.cnblogs.com/yhzhou/p/10568728.html 
+[Efficient Indexing of Billion-Scale datasets of deep descriptors 论文](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Babenko_Efficient_Indexing_of_CVPR_2016_paper.pdf)
+
